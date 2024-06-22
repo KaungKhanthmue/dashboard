@@ -6,7 +6,7 @@ export default function SideBar() {
 const {sideOnOffValue,setSideOnOffValue} = useContext(SideOnOff);
 
   function Side() {
-    setSideOnOffValue(() => true);
+    setSideOnOffValue((prev) =>!prev );
   }
 
   return (
@@ -56,7 +56,7 @@ const {sideOnOffValue,setSideOnOffValue} = useContext(SideOnOff);
                         d="M6 12a2 2 0 012-2h8a2 2 0 012 2v2a2 2 0 01-2 2H2h2a2 2 0 002-2v-2z"
                       />
                     </svg>
-                    <span className="group-hover:text-gray-700">UserList</span>
+                    <span className="group-hover:text-gray-700">Dashboard</span>
                   </NavLink>
                 </li>
                 <li className="min-w-max">
@@ -85,7 +85,7 @@ const {sideOnOffValue,setSideOnOffValue} = useContext(SideOnOff);
                         d="M15 7h1a2 2 0 012 2v5.5a1.5 1.5 0 01-3 0V7z"
                       />
                     </svg>
-                    <span className="group-hover:text-gray-700">Reports</span>
+                    <span className="group-hover:text-gray-700">UserList</span>
                   </NavLink>
                 </li>
 

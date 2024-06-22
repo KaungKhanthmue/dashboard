@@ -10,7 +10,7 @@ function Friend() {
   }
   return (
     <>
-      <div className="w-full " onClick={side}>
+      <div className="w-full " >
         {/* <SideBar/> */}
         <UserTable/>
       </div>
