@@ -1,55 +1,50 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import Api from "./../Api/ApiGet";
+import useApiPost from "./../Api/ApiPost";
 
 const url = "http://127.0.0.1:8000/api/user-list";
 const createUrl = "http://127.0.0.1:8000/api/user-create";
 
 export default function UserTable() {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [createModelBox, setCreateModelBox] = useState(false);
-  const [nameValue, setNameValue] = useState("");
-  const [emailValue, setEmailValue] = useState("");
-  const [passwordValue, setPasswordValue] = useState("");
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
 
-  async function getUsers() {
-    setLoading(true);
-    const response = await fetch(url);
-    const users = await response.json();
-    console.log(users);
-    setUsers(users.data);
-    setLoading(false);
-  }
+  const { loading: apiLoading, data, refetch } = Api(url);
+  const { fetchData, dataform, error, loading: postLoading } = useApiPost(createUrl);
 
-  async function createUser(event) {
-    event.preventDefault();
-    const response = await fetch(createUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: nameValue,
-        email: emailValue,
-        password: passwordValue,
-      }),
-    });
-    const user = await response.json();
-    setUsers([...users, user.data]);
-    setCreateModelBox(false);
-  }
-
-  function createClick() {
+  const createClick = () => {
     setCreateModelBox(true);
-  }
+  };
 
-  function createClickOff() {
+  const createClickOff = () => {
     setCreateModelBox(false);
-  }
+  };
 
-  useEffect(() => {
-    getUsers();
-  }, []);
+  const createUser = (e) => {
+    e.preventDefault();
+    if (form.password !== form.confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
+    fetchData(form).then(() => {
+      setForm({ name: "", email: "", password: "", confirmPassword: "" });
+      refetch(); 
+    });
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prevForm) => ({
+      ...prevForm,
+      [name]: value,
+    }));
+  };
 
   return (
     <div className="w-[100%]">
@@ -87,14 +82,14 @@ export default function UserTable() {
                     </tr>
                   </thead>
                   <tbody className="text-sm divide-y divide-gray-100">
-                    {loading ? (
+                    {apiLoading ? (
                       <tr>
                         <td colSpan="4" className="p-2 text-center">
                           Loading...
                         </td>
                       </tr>
                     ) : (
-                      users.map((user) => (
+                      data.data.map((user) => (
                         <tr key={user.id}>
                           <td className="p-2 whitespace-nowrap">
                             <div className="flex items-center">
@@ -139,16 +134,14 @@ export default function UserTable() {
           </div>
         </div>
       </section>
-      <div
-        className={
-          createModelBox
-            ? "w-[800px] z-10 absolute top-[20%] left-[29%] rounded-md"
-            : "hidden w-[800px] z-10 absolute top-[20%] left-[29%] rounded-md"
-        }
-      >
-        <div className="bg-gray-100 bg-opacity-100 py-8">
+      <div className={createModelBox ? "w-full" : "hidden w-full"}>
+        <div
+          className="w-full h-[1500px] z-20 absolute top-[90px] left-0  rounded-md"
+          onClick={createClickOff}
+        ></div>
+        <div className="bg-gray-100 bg-opacity-25 pt-[100px] z-30 absolute top-[15%] left-[30%] w-[40%]">
           <form
-            className="w-full max-w-xl mx-auto bg-opacity-25 p-2 rounded-md shadow-md"
+            className="w-full max-w-xl mx-auto bg-gray-100  rounded-md shadow-md p-5"
             onSubmit={createUser}
           >
             <div className="mb-4">
@@ -162,8 +155,8 @@ export default function UserTable() {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
                 type="text"
                 id="name"
-                value={nameValue}
-                onChange={(e) => setNameValue(e.target.value)}
+                value={form.name}
+                onChange={handleChange}
                 name="name"
                 placeholder="John Doe"
               />
@@ -179,8 +172,8 @@ export default function UserTable() {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
                 type="email"
                 id="email"
-                value={emailValue}
-                onChange={(e) => setEmailValue(e.target.value)}
+                value={form.email}
+                onChange={handleChange}
                 name="email"
                 placeholder="john@example.com"
               />
@@ -196,8 +189,8 @@ export default function UserTable() {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
                 type="password"
                 id="password"
-                value={passwordValue}
-                onChange={(e) => setPasswordValue(e.target.value)}
+                value={form.password}
+                onChange={handleChange}
                 name="password"
                 placeholder="********"
               />
@@ -205,24 +198,29 @@ export default function UserTable() {
             <div className="mb-4">
               <label
                 className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="confirm-password"
+                htmlFor="confirmPassword"
               >
                 Confirm Password
               </label>
               <input
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
                 type="password"
-                id="confirm-password"
-                name="confirm-password"
+                id="confirmPassword"
+                value={form.confirmPassword}
+                onChange={handleChange}
+                name="confirmPassword"
                 placeholder="********"
               />
             </div>
             <button
               className="w-full bg-indigo-500 text-white text-sm font-bold py-2 px-4 rounded-md hover:bg-indigo-600 transition duration-300"
               type="submit"
+              disabled={postLoading}
             >
-              Register
+              {postLoading ? "Registering..." : "Register"}
             </button>
+            {error && <p className="text-red-500 text-xs mt-2">{error.message}</p>}
+            {dataform && <p className="text-green-500 text-xs mt-2">User created successfully!</p>}
           </form>
         </div>
       </div>
