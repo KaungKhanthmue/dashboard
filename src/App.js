@@ -1,22 +1,20 @@
-import Nav from './layout/Nav'
-import Header from './layout/Header'
-import Body from './layout/Body'
 import { BrowserRouter,Routes,Route } from 'react-router-dom';
-import Friend from './component/Friend';
-import NavHome from './layout/NavHome';
+import User from './component/UserTable';
+import Home from './layout/Home';
 import UserFriendList from './component/UserFriendList';
+import Post from './component/Post';
 
 function App() {
   return (
     <BrowserRouter>
-      <Nav/>
+
       <Routes>
-        <Route path="/" element={<NavHome/>}>
+        <Route path="/" element={<Home/>}>
         </Route>
 
-        <Route path="/dashboard" element={<NavHome/>}>
-        <Route path="form" element={<Body/>} />
-        <Route path="friend" element={<Friend/>}/>
+        <Route path="/dashboard" element={<Home/>}>
+        <Route path="friend" element={<User/>}/>
+        <Route path="post" element={<Post/>} />
         <Route path="friend/:id" element={<UserFriendList/>} />
         </Route>
 

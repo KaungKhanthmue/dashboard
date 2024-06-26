@@ -1,18 +1,20 @@
 import React, { useState } from "react";
 import SideBar from "./SideBar";
 import { Outlet } from "react-router-dom";
-import SideOnOff from "./SideOnOff";
+import HomeContext from "./HomeContext";
+import Nav from "./Nav";
 
 function NavHome() {
     const [sideOnOffValue, setSideOnOffValue] = useState(false);
 
     return (
-        <SideOnOff.Provider value={{ sideOnOffValue, setSideOnOffValue }}>
+        <HomeContext.Provider value={{ sideOnOffValue, setSideOnOffValue }}>
+            <Nav/>
             <div className="w-full flex">
                 <SideBar />
                 <Outlet />
             </div>
-        </SideOnOff.Provider>
+        </HomeContext.Provider>
     );
 }
 

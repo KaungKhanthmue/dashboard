@@ -1,9 +1,9 @@
 import React, { useContext, useState } from "react";
 import { NavLink } from "react-router-dom";
-import SideOnOff from "./SideOnOff";
+import HomeContext from "./HomeContext";
 
 export default function SideBar() {
-const {sideOnOffValue,setSideOnOffValue} = useContext(SideOnOff);
+const {sideOnOffValue,setSideOnOffValue} = useContext(HomeContext);
 
   function Side() {
     setSideOnOffValue((prev) =>!prev );
@@ -32,7 +32,7 @@ const {sideOnOffValue,setSideOnOffValue} = useContext(SideOnOff);
               <ul className="mt-6 space-y-2 tracking-wide">
                 <li className="min-w-max">
                   <NavLink
-                    to="form"
+                    to="post"
                     className={({ isActive }) =>
                       isActive
                         ? "relative flex items-center space-x-4 bg-gradient-to-r from-sky-600 to-cyan-400 px-4 py-3 text-white"
@@ -56,7 +56,7 @@ const {sideOnOffValue,setSideOnOffValue} = useContext(SideOnOff);
                         d="M6 12a2 2 0 012-2h8a2 2 0 012 2v2a2 2 0 01-2 2H2h2a2 2 0 002-2v-2z"
                       />
                     </svg>
-                    <span className="group-hover:text-gray-700">Dashboard</span>
+                    <span className="group-hover:text-gray-700">Post</span>
                   </NavLink>
                 </li>
                 <li className="min-w-max">
