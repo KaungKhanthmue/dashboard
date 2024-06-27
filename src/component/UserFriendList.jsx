@@ -15,7 +15,7 @@ function UserFriendList() {
         <div className="flex flex-col  h-full">
           <div className="w-full max-w-7xl mx-auto bg-white shadow-lg rounded-sm border border-gray-200">
             <header className="px-5 py-4 border-b border-gray-100">
-              <h2 className="font-semibold text-gray-800">Customers</h2>
+              <h2 className="font-semibold text-gray-800">FriendShip</h2>
             </header>
             <div className="p-3">
               <div className="overflow-x-auto">
@@ -49,9 +49,13 @@ function UserFriendList() {
                           <td className="p-2 whitespace-nowrap">
                             <div className="flex items-center">
                               <div className="w-10 h-10 flex-shrink-0 mr-2 sm:mr-3">
-                                <img
+                              <img
                                   className="rounded-full"
-                                  src={user.profile_image === null ? "https://imgs.search.brave.com/7g0K3OD6Bd1ICqg8M2B55fdctUYI_OAq-SGouvxBgro/rs:fit:500:0:0/g:ce/aHR0cHM6Ly90NC5m/dGNkbi5uZXQvanBn/LzA3LzUyLzEzLzM3/LzM2MF9GXzc1MjEz/MzcyOV9kejRHWURr/YUtaNnZSQ05hZFQ1/UHoyRUJlNDNTaFJv/cy5qcGc": user.profile_image}
+                                  src={
+                                    user.user_image === null
+                                      ? "https://imgs.search.brave.com/7g0K3OD6Bd1ICqg8M2B55fdctUYI_OAq-SGouvxBgro/rs:fit:500:0:0/g:ce/aHR0cHM6Ly90NC5m/dGNkbi5uZXQvanBn/LzA3LzUyLzEzLzM3/LzM2MF9GXzc1MjEz/MzcyOV9kejRHWURr/YUtaNnZSQ05hZFQ1/UHoyRUJlNDNTaFJv/cy5qcGc"
+                                      : user.user_image.path
+                                  }
                                   width="40"
                                   height="40"
                                   alt={user.profile_image}

@@ -74,7 +74,7 @@ export default function UserTable() {
                         <div className="font-semibold text-left">Email</div>
                       </th>
                       <th className="p-2 whitespace-nowrap">
-                        <div className="font-semibold text-left">Spent</div>
+                        <div className="font-semibold text-left">Friends</div>
                       </th>
                       <th className="p-2 whitespace-nowrap">
                         <div className="font-semibold text-center">Country</div>
@@ -97,9 +97,9 @@ export default function UserTable() {
                                 <img
                                   className="rounded-full"
                                   src={
-                                    user.profile_image === null
+                                    user.user_image === null
                                       ? "https://imgs.search.brave.com/7g0K3OD6Bd1ICqg8M2B55fdctUYI_OAq-SGouvxBgro/rs:fit:500:0:0/g:ce/aHR0cHM6Ly90NC5m/dGNkbi5uZXQvanBn/LzA3LzUyLzEzLzM3/LzM2MF9GXzc1MjEz/MzcyOV9kejRHWURr/YUtaNnZSQ05hZFQ1/UHoyRUJlNDNTaFJv/cy5qcGc"
-                                      : user.profile_image
+                                      : user.user_image.path
                                   }
                                   width="40"
                                   height="40"

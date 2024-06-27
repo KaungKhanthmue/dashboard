@@ -43,6 +43,18 @@ export default function Post() {
       refetch();
     });
   };
+  const truncate = (text, length) => {
+    if (text.length > length) {
+      return text.substring(0, length) + "...";
+    }
+    return text;
+  };
+  const imagetruncate = (image, length) => {
+    if (image.length > length) {
+      return image.slice(0, length);
+    }
+    return image;
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -86,16 +98,28 @@ export default function Post() {
                       </th>
                       <th className="p-2 whitespace-nowrap">
                         <div className="font-semibold text-center flex justify-center items-center h-full">
-                          Post image
+                           image
                         </div>
                       </th>
                       <th className="p-2 whitespace-nowrap">
                         <div className="font-semibold text-center flex justify-center items-center h-full">
-                          Post Like
+                          Status
                         </div>
                       </th>
                       <th className="p-2 whitespace-nowrap">
-                        <div className="font-semibold text-center flex justify-center items-center h-full">Created</div>
+                        <div className="font-semibold text-center flex justify-center items-center h-full">
+                          Like
+                        </div>
+                      </th>
+                      <th className="p-2 whitespace-nowrap">
+                        <div className="font-semibold text-center flex justify-center items-center h-full">
+                          Comment
+                        </div>
+                      </th>
+                      <th className="p-2 whitespace-nowrap">
+                        <div className="font-semibold text-center flex justify-center items-center h-full">
+                          Created
+                        </div>
                       </th>
                     </tr>
                   </thead>
@@ -114,11 +138,8 @@ export default function Post() {
                               <div className="w-10 h-10 flex-shrink-0 mr-2 sm:mr-3">
                                 <img
                                   className="rounded-full"
-                                  src={
-                                    post.user.profile_image === null
-                                      ? "https://imgs.search.brave.com/7g0K3OD6Bd1ICqg8M2B55fdctUYI_OAq-SGouvxBgro/rs:fit:500:0:0/g:ce/aHR0cHM6Ly90NC5m/dGNkbi5uZXQvanBn/LzA3LzUyLzEzLzM3/LzM2MF9GXzc1MjEz/MzcyOV9kejRHWURr/YUtaNnZSQ05hZFQ1/UHoyRUJlNDNTaFJv/cy5qcGc"
-                                      : post.user.profile_image
-                                  }
+                                  src={"https://imgs.search.brave.com/7g0K3OD6Bd1ICqg8M2B55fdctUYI_OAq-SGouvxBgro/rs:fit:500:0:0/g:ce/aHR0cHM6Ly90NC5m/dGNkbi5uZXQvanBn/LzA3LzUyLzEzLzM3/LzM2MF9GXzc1MjEz/MzcyOV9kejRHWURr/YUtaNnZSQ05hZFQ1/UHoyRUJlNDNTaFJv/cy5qcGc"
+                                      }
                                   width="40"
                                   height="40"
                                   alt={post.user.profile_image}
@@ -129,34 +150,41 @@ export default function Post() {
                               </div>
                             </div>
                           </td>
-                          <td className=" whitespace-nowrap">
-                            <div className="text-left flex justify-center">{post.description}</div>
+                          <td className="whitespace-nowrap w-[300px] flex justify-center p-2">
+                            <div className="text-center mt-2">
+                              {truncate(post.description, 20)}
+                            </div>
                           </td>
-                          <td className="whitespace-nowrap ">
-                                  <div className="flex justify-center w-full h-full gap-1">
-                                  {post.image.map((img) => {
-                              return (
-                                <img
-                                  className="w-20 h-10"
-                                  src={
-                                    img.path === null
-                                      ? "https://imgs.search.brave.com/7g0K3OD6Bd1ICqg8M2B55fdctUYI_OAq-SGouvxBgro/rs:fit:500:0:0/g:ce/aHR0cHM6Ly90NC5m/dGNkbi5uZXQvanBn/LzA3LzUyLzEzLzM3/LzM2MF9GXzc1MjEz/MzcyOV9kejRHWURr/YUtaNnZSQ05hZFQ1/UHoyRUJlNDNTaFJv/cy5qcGc"
-                                      : img.path
-                                  }
-                                  alt=""
-                                />
-                              );
-                            })}
-                                  </div>
-                          </td>
-                          <td className="p-2 whitespace-nowrap ">
-                            <div className=" text-center">Liked User</div>
-                          </td>
-                          <td className="p-2 whitespace-nowrap ">
-                            <div className=" text-center">Commented User</div>
+                          <td className="whitespace-nowrap p-2">
+                            <div className="flex justify-center w-full h-full gap-1">
+                              {imagetruncate(
+                                post.image.map((img) => (
+                                  <img
+                                    key={img.path}
+                                    className="w-20 h-10"
+                                    src={
+                                      img.path === null
+                                        ? "https://imgs.search.brave.com/7g0K3OD6Bd1ICqg8M2B55fdctUYI_OAq-SGouvxBgro/rs:fit:500:0:0/g:ce/aHR0cHM6Ly90NC5m/dGNkbi5uZXQvanBn/LzA3LzUyLzEzLzM3/LzM2MF9GXzc1MjEz/MzcyOV9kejRHWURr/YUtaNnZSQ05hZFQ1/UHoyRUJlNDNTaFJv/cy5qcGc"
+                                        : img.path
+                                    }
+                                    alt=""
+                                  />
+                                )),
+                                4
+                              )}
+                            </div>
                           </td>
                           <td className="p-2 whitespace-nowrap">
-                            <div className=" text-center">{post.time}</div>
+                            <div className="text-center">{post.status}</div>
+                          </td>
+                          <td className="p-2 whitespace-nowrap">
+                            <div className="text-center">40</div>
+                          </td>
+                          <td className="p-2 whitespace-nowrap">
+                            <div className="text-center">5</div>
+                          </td>
+                          <td className="p-2 whitespace-nowrap">
+                            <div className="text-center">{post.time}</div>
                           </td>
                         </tr>
                       ))
