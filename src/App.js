@@ -1,26 +1,20 @@
-import { BrowserRouter,Routes,Route } from 'react-router-dom';
-import User from './component/UserTable';
-import Home from './layout/Home';
-import UserFriendList from './component/UserFriendList';
-import Post from './component/Post';
+import { RouterProvider } from 'react-router-dom';
+import router from './router/router.jsx'
+import AuthContext from './context/AuthContext.jsx';
+import { useEffect, useState } from 'react';
 
-function App() {
+const App = () => {
+  const [token, setToken] = useState(() => localStorage.getItem('ACCESS_TOKEN') || '');
+
+  useEffect(() => {
+    localStorage.setItem('ACCESS_TOKEN', token);
+  }, [token]);
+
   return (
-    <BrowserRouter>
-
-      <Routes>
-        <Route path="/" element={<Home/>}>
-        </Route>
-
-        <Route path="/dashboard" element={<Home/>}>
-        <Route path="friend" element={<User/>}/>
-        <Route path="post" element={<Post/>} />
-        <Route path="friend/:id" element={<UserFriendList/>} />
-        </Route>
-
-      </Routes>
-    </BrowserRouter>
+    <AuthContext.Provider value={{ token, setToken }}>
+      <RouterProvider router={router} />
+    </AuthContext.Provider>
   );
-}
+};
 
 export default App;

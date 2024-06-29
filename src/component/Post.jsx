@@ -4,15 +4,16 @@ import Api from "./../Api/ApiGet";
 import useApiPost from "./../Api/ApiPost";
 
 const url = "http://127.0.0.1:8000/api/post-list";
-const createUrl = "http://127.0.0.1:8000/api/user-create";
+const createUrl = "http://127.0.0.1:8000/api/post-create";
 
 export default function Post() {
   const [createModelBox, setCreateModelBox] = useState(false);
   const [form, setForm] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
+    title: "",
+    description: "",
+    user_id: "",
+    category_id: "",
+    image: null,
   });
 
   const { loading: apiLoading, data, refetch } = Api(url);
@@ -32,17 +33,45 @@ export default function Post() {
     setCreateModelBox(false);
   };
 
-  const createUser = (e) => {
+  const createPost = (e) => {
     e.preventDefault();
-    if (form.password !== form.confirmPassword) {
-      alert("Passwords do not match!");
-      return;
-    }
-    fetchData(form).then(() => {
-      setForm({ name: "", email: "", password: "", confirmPassword: "" });
+    const formData = new FormData();
+    formData.append("title", form.title);
+    formData.append("description", form.description);
+    formData.append("user_id", form.user_id);
+    formData.append("category_id", form.category_id);
+    formData.append("image", form.image);
+
+    fetchData(formData).then(() => {
+      setForm({
+        title: "",
+        description: "",
+        user_id: "",
+        category_id: "",
+        image: null,
+      });
       refetch();
     });
   };
+
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
+
+    if (name === "image") {
+      // Handle file input separately
+      setForm((prevForm) => ({
+        ...prevForm,
+        image: files[0], // Assuming single file upload
+      }));
+    } else {
+      // Handle other inputs
+      setForm((prevForm) => ({
+        ...prevForm,
+        [name]: value,
+      }));
+    }
+  };
+
   const truncate = (text, length) => {
     if (text.length > length) {
       return text.substring(0, length) + "...";
@@ -56,19 +85,11 @@ export default function Post() {
     return image;
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prevForm) => ({
-      ...prevForm,
-      [name]: value,
-    }));
-  };
-
   return (
     <div className="w-[100%]">
       <div className="w-full h-[100px] flex justify-end items-center container mx-auto pr-[130px]">
         <div
-          className="w-[150px] h-[50px] bg-cyan-600 rounded-xl px-11 py-2 font-semibold text-xl text-white cursor-pointer"
+          className="w-[130px] h-[40px] bg-cyan-600 rounded-xl px-9 py-1 font-semibold text-xl text-white cursor-pointer"
           onClick={createClick}
         >
           Create
@@ -98,7 +119,7 @@ export default function Post() {
                       </th>
                       <th className="p-2 whitespace-nowrap">
                         <div className="font-semibold text-center flex justify-center items-center h-full">
-                           image
+                          image
                         </div>
                       </th>
                       <th className="p-2 whitespace-nowrap">
@@ -138,8 +159,9 @@ export default function Post() {
                               <div className="w-10 h-10 flex-shrink-0 mr-2 sm:mr-3">
                                 <img
                                   className="rounded-full"
-                                  src={"https://imgs.search.brave.com/7g0K3OD6Bd1ICqg8M2B55fdctUYI_OAq-SGouvxBgro/rs:fit:500:0:0/g:ce/aHR0cHM6Ly90NC5m/dGNkbi5uZXQvanBn/LzA3LzUyLzEzLzM3/LzM2MF9GXzc1MjEz/MzcyOV9kejRHWURr/YUtaNnZSQ05hZFQ1/UHoyRUJlNDNTaFJv/cy5qcGc"
-                                      }
+                                  src={
+                                    "https://imgs.search.brave.com/7g0K3OD6Bd1ICqg8M2B55fdctUYI_OAq-SGouvxBgro/rs:fit:500:0:0/g:ce/aHR0cHM6Ly90NC5m/dGNkbi5uZXQvanBn/LzA3LzUyLzEzLzM3/LzM2MF9GXzc1MjEz/MzcyOV9kejRHWURr/YUtaNnZSQ05hZFQ1/UHoyRUJlNDNTaFJv/cy5qcGc"
+                                  }
                                   width="40"
                                   height="40"
                                   alt={post.user.profile_image}
@@ -178,10 +200,12 @@ export default function Post() {
                             <div className="text-center">{post.status}</div>
                           </td>
                           <td className="p-2 whitespace-nowrap">
-                            <div className="text-center">40</div>
+                            <div className="text-center">{post.likeCount}</div>
                           </td>
                           <td className="p-2 whitespace-nowrap">
-                            <div className="text-center">5</div>
+                            <div className="text-center">
+                              {post.commentCount}
+                            </div>
                           </td>
                           <td className="p-2 whitespace-nowrap">
                             <div className="text-center">{post.time}</div>
@@ -204,74 +228,84 @@ export default function Post() {
         <div className="bg-gray-100 bg-opacity-25 pt-[100px] z-30 absolute top-[15%] left-[30%] w-[40%]">
           <form
             className="w-full max-w-xl mx-auto bg-gray-100  rounded-md shadow-md p-5"
-            onSubmit={createUser}
+            onSubmit={createPost}
           >
             <div className="mb-4">
               <label
                 className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="name"
+                htmlFor="title"
               >
-                Name
+                Title
               </label>
               <input
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
+                value={form.title}
+                onChange={handleChange}
+                name="title"
                 type="text"
-                id="name"
-                value={form.name}
-                onChange={handleChange}
-                name="name"
-                placeholder="John Doe"
+                placeholder="Title"
               />
             </div>
             <div className="mb-4">
               <label
                 className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="email"
+                htmlFor="description"
               >
-                Email
+                Description
               </label>
               <input
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
-                type="email"
-                id="email"
-                value={form.email}
+                value={form.description}
                 onChange={handleChange}
-                name="email"
-                placeholder="john@example.com"
+                name="description"
+                type="text"
+                placeholder="Description"
               />
             </div>
             <div className="mb-4">
               <label
                 className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="password"
+                htmlFor="user_id"
               >
-                Password
+                User
               </label>
               <input
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
-                type="password"
-                id="password"
-                value={form.password}
+                value={form.user_id}
                 onChange={handleChange}
-                name="password"
-                placeholder="********"
+                name="user_id"
+                type="text"
+                placeholder="User ID"
               />
             </div>
             <div className="mb-4">
               <label
                 className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="confirmPassword"
+                htmlFor="category_id"
               >
-                Confirm Password
+                Category
               </label>
               <input
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
-                type="password"
-                id="confirmPassword"
-                value={form.confirmPassword}
+                value={form.category_id}
                 onChange={handleChange}
-                name="confirmPassword"
-                placeholder="********"
+                name="category_id"
+                type="text"
+                placeholder="Category ID"
+              />
+            </div>
+            <div className="mb-4">
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2"
+                htmlFor="image"
+              >
+                Image Upload
+              </label>
+              <input
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
+                onChange={handleChange}
+                name="image"
+                type="file"
               />
             </div>
             <button

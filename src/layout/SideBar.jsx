@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { NavLink } from "react-router-dom";
-import HomeContext from "./HomeContext";
+import HomeContext from "./../context/HomeContext";
 
 export default function SideBar() {
 const {sideOnOffValue,setSideOnOffValue} = useContext(HomeContext);
@@ -61,7 +61,7 @@ const {sideOnOffValue,setSideOnOffValue} = useContext(HomeContext);
                 </li>
                 <li className="min-w-max">
                   <NavLink
-                    to="friend"
+                    to="user"
                     className={({ isActive }) =>
                       isActive
                         ? "relative flex items-center space-x-4 bg-gradient-to-r from-sky-600 to-cyan-400 px-4 py-3 text-white"
