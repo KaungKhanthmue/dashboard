@@ -1,11 +1,11 @@
-import React, { useContext, useState } from "react";
+import React, { memo, useContext, useState } from "react";
 import SideBar from "./SideBar";
 import { Navigate, Outlet } from "react-router-dom";
 import HomeContext from "./../context/HomeContext";
 import Nav from "./Nav";
 import AuthContext from "../context/AuthContext";
 
-function NavHome() {
+const  NavHome = memo(() =>{
     const [sideOnOffValue, setSideOnOffValue] = useState(false);
 
 
@@ -24,6 +24,6 @@ function NavHome() {
             </div>
         </HomeContext.Provider>
     );
-}
+})
 
 export default NavHome;

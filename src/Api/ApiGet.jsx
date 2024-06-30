@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useState, useEffect } from "react";
 
 const useApiGet = (url) => {
@@ -7,11 +8,14 @@ const useApiGet = (url) => {
 
     const fetchDataGet = async () => {
         try {
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error(`Error: ${response.statusText}`);
-            }
-            const data = await response.json();
+            const token = localStorage.getItem('ACCESS_TOKEN');
+            const response = await axios.get(url, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            const data = response.data;
             setData(data);
         } catch (err) {
             setError(err);

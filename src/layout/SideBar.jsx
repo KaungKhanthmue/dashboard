@@ -1,35 +1,25 @@
-import React, { useContext, useState } from "react";
+import React, { memo, useContext } from "react";
 import { NavLink } from "react-router-dom";
-import HomeContext from "./../context/HomeContext";
+import HomeContext from "../context/HomeContext";
 
-export default function SideBar() {
-const {sideOnOffValue,setSideOnOffValue} = useContext(HomeContext);
+const SideBar = memo(() => {
+  const { sideOnOffValue, setSideOnOffValue } = useContext(HomeContext);
 
-  function Side() {
-    setSideOnOffValue((prev) =>!prev );
-  }
+
 
   return (
     <div className="">
-      <div className="min-h-screen ">
+      <div className="">
         <div
           className={
             sideOnOffValue
-              ? "sidebar min-h-screen overflow-hidden border-r w-[300px] hover:bg-white hover:shadow-lg"
-              : "sidebar min-h-screen w-[3.4rem] overflow-hidden border-r hover:shadow-lg"
+              ? "sidebar overflow-hidden border-r w-[300px] h-[831px] bg-gray-700 hover:shadow-lg"
+              : "sidebar w-[3.4rem] overflow-hidden h-[831px] bg-gray-700 border-r hover:shadow-lg"
           }
-          onClick={Side}
         >
-          <div className="flex h-screen flex-col justify-between pb-6">
+          <div className="flex flex-col justify-between pb-6">
             <div>
-              <div className="w-max">
-                <img
-                  src="https://tailus.io/images/logo.svg"
-                  className="w-32 cursor-pointer"
-                  alt=""
-                />
-              </div>
-              <ul className="mt-6 space-y-2 tracking-wide">
+              <ul className="space-y-2 tracking-wide">
                 <li className="min-w-max">
                   <NavLink
                     to="post"
@@ -56,7 +46,7 @@ const {sideOnOffValue,setSideOnOffValue} = useContext(HomeContext);
                         d="M6 12a2 2 0 012-2h8a2 2 0 012 2v2a2 2 0 01-2 2H2h2a2 2 0 002-2v-2z"
                       />
                     </svg>
-                    <span className="group-hover:text-gray-700">Post</span>
+                    <span className="text-white">Post</span>
                   </NavLink>
                 </li>
                 <li className="min-w-max">
@@ -85,10 +75,9 @@ const {sideOnOffValue,setSideOnOffValue} = useContext(HomeContext);
                         d="M15 7h1a2 2 0 012 2v5.5a1.5 1.5 0 01-3 0V7z"
                       />
                     </svg>
-                    <span className="group-hover:text-gray-700">UserList</span>
+                    <span className="text-white">UserList</span>
                   </NavLink>
                 </li>
-
               </ul>
             </div>
             <div className="w-max -mb-3">
@@ -112,7 +101,7 @@ const {sideOnOffValue,setSideOnOffValue} = useContext(HomeContext);
                     clipRule="evenodd"
                   />
                 </svg>
-                <span className="group-hover:text-gray-700">Settings</span>
+                <span className="text-white">Settings</span>
               </NavLink>
             </div>
           </div>
@@ -120,4 +109,6 @@ const {sideOnOffValue,setSideOnOffValue} = useContext(HomeContext);
       </div>
     </div>
   );
-}
+});
+
+export default SideBar;

@@ -1,7 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import Home from './../layout/Home.jsx'
-import Post from './../component/Post.jsx'
-import User from './../component/UserTable.jsx'
+import Post from './../component/post/Post.jsx'
+import User from './../component/user/UserList.jsx'
 import Auth from './../layout/Auth.jsx'
 import Login from './../component/Auth/Login.jsx'
 import Register from './../component/Auth/Register.jsx'
