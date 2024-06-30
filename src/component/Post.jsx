@@ -15,8 +15,9 @@ export default function Post() {
     category_id: "",
     image: null,
   });
+  const [page, setPage] = useState(1);
 
-  const { loading: apiLoading, data, refetch } = Api(url);
+  const { loading: apiLoading, data, refetch } = Api(`${url}?page=${page}`);
 
   const {
     fetchData,
@@ -58,13 +59,11 @@ export default function Post() {
     const { name, value, files } = e.target;
 
     if (name === "image") {
-      // Handle file input separately
       setForm((prevForm) => ({
         ...prevForm,
-        image: files[0], // Assuming single file upload
+        image: files[0],
       }));
     } else {
-      // Handle other inputs
       setForm((prevForm) => ({
         ...prevForm,
         [name]: value,
@@ -78,12 +77,61 @@ export default function Post() {
     }
     return text;
   };
+
   const imagetruncate = (image, length) => {
     if (image.length > length) {
       return image.slice(0, length);
     }
     return image;
   };
+
+  const handlePagination = (newPage) => {
+    if (newPage > 0 && newPage <= data.meta.last_page) {
+      setPage(newPage);
+      refetch();
+    }
+  };
+
+  const renderPageNumbers = () => {
+    const pageNumbers = [];
+    for (let i = page - 2; i <= page + 2; i++) {
+      if (i > 0 && i <= data.meta.last_page) {
+        pageNumbers.push(i);
+      }
+    }
+    return (
+      <>
+        <button
+          className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md"
+          onClick={() => handlePagination(page - 1)}
+          disabled={data.meta.current_page === 1}
+        >
+          Previous
+        </button>
+        {pageNumbers.map((pageNumber) => (
+          <button
+            key={pageNumber}
+            className={`px-4 py-2 rounded-md ${
+              pageNumber === page
+                ? "bg-cyan-600 text-white"
+                : "bg-gray-200 text-gray-700"
+            }`}
+            onClick={() => handlePagination(pageNumber)}
+          >
+            {pageNumber}
+          </button>
+        ))}
+        <button
+          className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md"
+          onClick={() => handlePagination(page + 1)}
+          disabled={data.meta.current_page === data.meta.last_page}
+        >
+          Next
+        </button>
+      </>
+    );
+  };
+  
 
   return (
     <div className="w-[100%]">
@@ -111,7 +159,6 @@ export default function Post() {
                           User
                         </div>
                       </th>
-
                       <th className="p-2 whitespace-nowrap">
                         <div className="font-semibold text-center flex justify-center items-center h-full">
                           Post Description
@@ -119,7 +166,7 @@ export default function Post() {
                       </th>
                       <th className="p-2 whitespace-nowrap">
                         <div className="font-semibold text-center flex justify-center items-center h-full">
-                          image
+                          Image
                         </div>
                       </th>
                       <th className="p-2 whitespace-nowrap">
@@ -147,7 +194,7 @@ export default function Post() {
                   <tbody className="text-sm divide-y divide-gray-100">
                     {apiLoading ? (
                       <tr>
-                        <td colSpan="4" className="p-2 text-center">
+                        <td colSpan="7" className="p-2 text-center">
                           Loading...
                         </td>
                       </tr>
@@ -160,11 +207,12 @@ export default function Post() {
                                 <img
                                   className="rounded-full"
                                   src={
+                                    post.user.user_image ||
                                     "https://imgs.search.brave.com/7g0K3OD6Bd1ICqg8M2B55fdctUYI_OAq-SGouvxBgro/rs:fit:500:0:0/g:ce/aHR0cHM6Ly90NC5m/dGNkbi5uZXQvanBn/LzA3LzUyLzEzLzM3/LzM2MF9GXzc1MjEz/MzcyOV9kejRHWURr/YUtaNnZSQ05hZFQ1/UHoyRUJlNDNTaFJv/cy5qcGc"
                                   }
                                   width="40"
                                   height="40"
-                                  alt={post.user.profile_image}
+                                  alt={post.user.name}
                                 />
                               </div>
                               <div className="font-medium text-gray-800">
@@ -185,9 +233,8 @@ export default function Post() {
                                     key={img.path}
                                     className="w-20 h-10"
                                     src={
-                                      img.path === null
-                                        ? "https://imgs.search.brave.com/7g0K3OD6Bd1ICqg8M2B55fdctUYI_OAq-SGouvxBgro/rs:fit:500:0:0/g:ce/aHR0cHM6Ly90NC5m/dGNkbi5uZXQvanBn/LzA3LzUyLzEzLzM3/LzM2MF9GXzc1MjEz/MzcyOV9kejRHWURr/YUtaNnZSQ05hZFQ1/UHoyRUJlNDNTaFJv/cy5qcGc"
-                                        : img.path
+                                      img.path ||
+                                      "https://imgs.search.brave.com/7g0K3OD6Bd1ICqg8M2B55fdctUYI_OAq-SGouvxBgro/rs:fit:500:0:0/g:ce/aHR0cHM6Ly90NC5m/dGNkbi5uZXQvanBn/LzA3LzUyLzEzLzM3/LzM2MF9GXzc1MjEz/MzcyOV9kejRHWURr/YUtaNnZSQ05hZFQ1/UHoyRUJlNDNTaFJv/cy5qcGc"
                                     }
                                     alt=""
                                   />
@@ -216,116 +263,99 @@ export default function Post() {
                   </tbody>
                 </table>
               </div>
+              {data && data.meta && (
+                <div className="flex justify-end mt-4">
+                  {renderPageNumbers()}
+                </div>
+              )}
             </div>
           </div>
         </div>
       </section>
-      <div className={createModelBox ? "w-full" : "hidden w-full"}>
-        <div
-          className="w-full h-[1500px] z-20 absolute top-[90px] left-0  rounded-md"
-          onClick={createClickOff}
-        ></div>
-        <div className="bg-gray-100 bg-opacity-25 pt-[100px] z-30 absolute top-[15%] left-[30%] w-[40%]">
-          <form
-            className="w-full max-w-xl mx-auto bg-gray-100  rounded-md shadow-md p-5"
-            onSubmit={createPost}
-          >
-            <div className="mb-4">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="title"
-              >
-                Title
-              </label>
-              <input
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
-                value={form.title}
-                onChange={handleChange}
-                name="title"
-                type="text"
-                placeholder="Title"
-              />
-            </div>
-            <div className="mb-4">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="description"
-              >
-                Description
-              </label>
-              <input
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
-                value={form.description}
-                onChange={handleChange}
-                name="description"
-                type="text"
-                placeholder="Description"
-              />
-            </div>
-            <div className="mb-4">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="user_id"
-              >
-                User
-              </label>
-              <input
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
-                value={form.user_id}
-                onChange={handleChange}
-                name="user_id"
-                type="text"
-                placeholder="User ID"
-              />
-            </div>
-            <div className="mb-4">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="category_id"
-              >
-                Category
-              </label>
-              <input
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
-                value={form.category_id}
-                onChange={handleChange}
-                name="category_id"
-                type="text"
-                placeholder="Category ID"
-              />
-            </div>
-            <div className="mb-4">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="image"
-              >
-                Image Upload
-              </label>
-              <input
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
-                onChange={handleChange}
-                name="image"
-                type="file"
-              />
-            </div>
+      {createModelBox && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg">
             <button
-              className="w-full bg-indigo-500 text-white text-sm font-bold py-2 px-4 rounded-md hover:bg-indigo-600 transition duration-300"
-              type="submit"
-              disabled={postLoading}
+              className="bg-red-500 text-white px-4 py-2 rounded-md mb-4"
+              onClick={createClickOff}
             >
-              {postLoading ? "Registering..." : "Register"}
+              Close
             </button>
-            {error && (
-              <p className="text-red-500 text-xs mt-2">{error.message}</p>
-            )}
-            {dataform && (
-              <p className="text-green-500 text-xs mt-2">
-                User created successfully!
-              </p>
-            )}
-          </form>
+            <form onSubmit={createPost}>
+              <div>
+                <label htmlFor="title" className="block mb-2">
+                  Title:
+                </label>
+                <input
+                  type="text"
+                  name="title"
+                  id="title"
+                  className="border border-gray-300 p-2 rounded-md w-full mb-4"
+                  value={form.title}
+                  onChange={handleChange}
+                />
+              </div>
+              <div>
+                <label htmlFor="description" className="block mb-2">
+                  Description:
+                </label>
+                <input
+                  type="text"
+                  name="description"
+                  id="description"
+                  className="border border-gray-300 p-2 rounded-md w-full mb-4"
+                  value={form.description}
+                  onChange={handleChange}
+                />
+              </div>
+              <div>
+                <label htmlFor="user_id" className="block mb-2">
+                  User ID:
+                </label>
+                <input
+                  type="text"
+                  name="user_id"
+                  id="user_id"
+                  className="border border-gray-300 p-2 rounded-md w-full mb-4"
+                  value={form.user_id}
+                  onChange={handleChange}
+                />
+              </div>
+              <div>
+                <label htmlFor="category_id" className="block mb-2">
+                  Category ID:
+                </label>
+                <input
+                  type="text"
+                  name="category_id"
+                  id="category_id"
+                  className="border border-gray-300 p-2 rounded-md w-full mb-4"
+                  value={form.category_id}
+                  onChange={handleChange}
+                />
+              </div>
+              <div>
+                <label htmlFor="image" className="block mb-2">
+                  Image:
+                </label>
+                <input
+                  type="file"
+                  name="image"
+                  id="image"
+                  className="border border-gray-300 p-2 rounded-md w-full mb-4"
+                  onChange={handleChange}
+                />
+              </div>
+              <button
+                type="submit"
+                className="bg-cyan-600 text-white px-4 py-2 rounded-md"
+              >
+                {postLoading ? "Creating..." : "Create"}
+              </button>
+            </form>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

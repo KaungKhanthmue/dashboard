@@ -14,8 +14,8 @@ export default function UserTable() {
     password: "",
     confirmPassword: "",
   });
-
-  const { loading: apiLoading, data, refetch } = Api(url);
+  const [page, setPage] = useState(1);
+  const { loading: apiLoading, data, refetch } = Api(`${url}?page=${page}`);
   const { fetchData, dataform, error, loading: postLoading } = useApiPost(createUrl);
 
   const createClick = () => {
@@ -44,6 +44,52 @@ export default function UserTable() {
       ...prevForm,
       [name]: value,
     }));
+  };
+
+  const handlePagination = (newPage) => {
+    if (newPage > 0 && newPage <= data.meta.last_page) {
+      setPage(newPage);
+      refetch();
+    }
+  };
+  const renderPageNumbers = () => {
+    const pageNumbers = [];
+    for (let i = page - 2; i <= page + 2; i++) {
+      if (i > 0 && i <= data.meta.last_page) {
+        pageNumbers.push(i);
+      }
+    }
+    return (
+      <>
+        <button
+          className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md"
+          onClick={() => handlePagination(page - 1)}
+          disabled={data.meta.current_page === 1}
+        >
+          Previous
+        </button>
+        {pageNumbers.map((pageNumber) => (
+          <button
+            key={pageNumber}
+            className={`px-4 py-2 rounded-md ${
+              pageNumber === page
+                ? "bg-cyan-600 text-white"
+                : "bg-gray-200 text-gray-700"
+            }`}
+            onClick={() => handlePagination(pageNumber)}
+          >
+            {pageNumber}
+          </button>
+        ))}
+        <button
+          className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md"
+          onClick={() => handlePagination(page + 1)}
+          disabled={data.meta.current_page === data.meta.last_page}
+        >
+          Next
+        </button>
+      </>
+    );
   };
 
   return (
@@ -130,6 +176,11 @@ export default function UserTable() {
                   </tbody>
                 </table>
               </div>
+              {data && data.meta && (
+                <div className="flex justify-end mt-4">
+                  {renderPageNumbers()}
+                </div>
+              )}
             </div>
           </div>
         </div>
