@@ -205,7 +205,7 @@ export default function UserList() {
               type="submit"
               disabled={postLoading}
             >
-              {postLoading ? "Registering..." : "Register"}
+              {postLoading ? "Creating..." : "Create"}
             </button>
             {error && <p className="text-red-500 text-xs mt-2">{error.message}</p>}
             {dataform && <p className="text-green-500 text-xs mt-2">User created successfully!</p>}

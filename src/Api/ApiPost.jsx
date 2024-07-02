@@ -8,11 +8,12 @@ const useApiPost = (url) => {
     const fetchData = async (form) => {
         setLoading(true);
         setError(null);
-        
+    const token = localStorage.getItem('ACCESS_TOKEN');
         try {
             const response = await fetch(url, {
                 method: "POST",
                 headers: {
+                    'Authorization': `Bearer ${token}`,
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify(form),

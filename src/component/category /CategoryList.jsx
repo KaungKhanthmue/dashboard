@@ -1,14 +1,46 @@
 import React, { useState } from 'react'
 import CategoryTable from './CategoryTable'
 import Api from './../../Api/ApiGet'
+import useApiPost from './../../Api/ApiPost'
 function CategoryList() {
 
     const [page, setPage] = useState(1);
+    const [createModelBox, setCreateModelBox] = useState(false);
+    const [form, setForm] = useState({
+      name: "",
+    });
 
     const url = `http://127.0.0.1:8000/api/category-list`;
+    const createUrl = `http://127.0.0.1:8000/api/category-create`;
 
     const { loading: apiLoading, data, refetch } = Api(`${url}?page=${page}`);
+    const { fetchData, dataform, error, loading: postLoading } = useApiPost(createUrl);
+    const createClick = () => {
+        setCreateModelBox(true);
+      };
+    
+      const createClickOff = () => {
+        setCreateModelBox(false);
+      };
 
+      const createCategory = (e) => {
+        e.preventDefault();
+        if (form.password !== form.confirmPassword) {
+          alert("Passwords do not match!");
+          return;
+        }
+        fetchData(form).then(() => {
+          setForm({ name: "" });
+          refetch(); 
+        });
+      };
+      const handleChange = (e) => {
+        const { name, value } = e.target;
+        setForm((prevForm) => ({
+          ...prevForm,
+          [name]: value,
+        }));
+      };
     const handlePagination = (newPage) => {
         if (newPage > 0 && newPage <= data.meta.last_page) {
           setPage(newPage);
@@ -62,6 +94,7 @@ function CategoryList() {
     <div className="w-full h-[70px] flex justify-end items-center container mx-auto pr-[130px]">
       <div
         className="w-[130px] h-[40px] bg-cyan-600 rounded-xl px-9 py-1 font-semibold text-xl text-white cursor-pointer"
+        onClick={createClick}
       >
         Create
       </div>
@@ -85,6 +118,46 @@ function CategoryList() {
         </div>
       </div>
     </section>
+    <div className={createModelBox ? "w-full" : "hidden w-full"}>
+        <div
+          className="w-full h-[1500px] z-20 absolute top-[90px] left-0  rounded-md"
+          onClick={createClickOff}
+        ></div>
+        <div className="bg-gray-100 bg-opacity-25 pt-[100px] z-30 absolute top-[15%] left-[30%] w-[40%]">
+          <form
+            className="w-full max-w-xl mx-auto bg-gray-100  rounded-md shadow-md p-5"
+            onSubmit={createCategory}
+          >
+            <div className="mb-4">
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2"
+                htmlFor="name"
+              >
+                Name
+              </label>
+              <input
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
+                type="text"
+                id="name"
+                value={form.name}
+                onChange={handleChange}
+                name="name"
+                placeholder="John Doe"
+              />
+            </div>
+
+            <button
+              className="w-full bg-indigo-500 text-white text-sm font-bold py-2 px-4 rounded-md hover:bg-indigo-600 transition duration-300"
+              type="submit"
+              disabled={postLoading}
+            >
+              {postLoading ? "Creating..." : "Create"}
+            </button>
+            {error && <p className="text-red-500 text-xs mt-2">{error.message}</p>}
+            {dataform && <p className="text-green-500 text-xs mt-2">User created successfully!</p>}
+          </form>
+        </div>
+      </div>
     </div>
   )
 }
