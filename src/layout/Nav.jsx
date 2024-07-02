@@ -20,7 +20,7 @@ const Nav= memo(()=> {
 
   return (
     <div className="w-full h-[70px] bg-black text-white flex items-center justify-between px-4">
-      <div className="w-10 h-10 bg-red-900 text-center" onClick={toggleSidebar}>Nav</div>
+      <div className="w-10 h-10  text-center" onClick={toggleSidebar}>Nav</div>
       <div>
         {apiLoading ? (
           <span>Loading...</span>

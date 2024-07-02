@@ -5,7 +5,7 @@ import User from './../component/user/UserList.jsx'
 import Auth from './../layout/Auth.jsx'
 import Login from './../component/Auth/Login.jsx'
 import Register from './../component/Auth/Register.jsx'
-import UserFriendList from './../component/UserFriendList.jsx'
+import UserFriendList from './../component/user/UserFriendList.jsx'
 
 const  router =  createBrowserRouter(
     [

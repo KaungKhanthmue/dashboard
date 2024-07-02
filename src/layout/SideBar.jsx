@@ -13,8 +13,8 @@ const SideBar = memo(() => {
         <div
           className={
             sideOnOffValue
-              ? "sidebar overflow-hidden border-r w-[300px] h-[831px] bg-gray-700 hover:shadow-lg"
-              : "sidebar w-[3.4rem] overflow-hidden h-[831px] bg-gray-700 border-r hover:shadow-lg"
+              ? "sidebar w-[3.4rem] overflow-hidden h-[831px] bg-gray-700 border-r hover:shadow-lg"
+              : "sidebar overflow-hidden border-r w-[300px] h-[831px] bg-gray-700 hover:shadow-lg"
           }
         >
           <div className="flex flex-col justify-between pb-6">
