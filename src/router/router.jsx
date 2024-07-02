@@ -6,6 +6,7 @@ import Auth from './../layout/Auth.jsx'
 import Login from './../component/Auth/Login.jsx'
 import Register from './../component/Auth/Register.jsx'
 import UserFriendList from './../component/user/UserFriendList.jsx'
+import CategoryList from  '././../component/category /CategoryList.jsx'
 
 const  router =  createBrowserRouter(
     [
@@ -24,6 +25,10 @@ const  router =  createBrowserRouter(
                 {
                     path: '/user/:id',
                     element: <UserFriendList/>,
+                },
+                {
+                    path: '/category',
+                    element: <CategoryList/>
                 }
 
             ],
